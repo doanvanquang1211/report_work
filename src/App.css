@@ -1,0 +1,169 @@
+/* Toàn bộ màn hình */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+/* Container chính: căn giữa ngang + dọc */
+.container {
+  min-height: 100vh; /* full chiều cao màn hình */
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* căn ngang */
+  justify-content: center; /* căn dọc */
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* Tabs */
+.tabs {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap; /* để responsive */
+  justify-content: center;
+  gap: 10px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  background-color: #ddd;
+  border-radius: 4px;
+  flex: none;
+}
+
+.tabs button.active {
+  background-color: #2196f3;
+  color: white;
+}
+
+/* Card form và danh sách */
+.card {
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 100%;
+  min-width: 520px; /* giới hạn chiều rộng tối đa */
+  box-sizing: border-box;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn.secondary {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* Table column widths */
+.list-card table th:nth-child(1),
+.list-card table td:nth-child(1) {
+  width: 15%;
+}
+
+.list-card table th:nth-child(2),
+.list-card table td:nth-child(2) {
+  width: 35%;
+}
+
+.list-card table th:nth-child(3),
+.list-card table td:nth-child(3) {
+  width: 10%;
+}
+
+.list-card table th:nth-child(4),
+.list-card table td:nth-child(4) {
+  width: 5%;
+}
+
+.list-card table th:nth-child(5),
+.list-card table td:nth-child(5) {
+  width: 10%;
+}
+
+.list-card table th:nth-child(6),
+.list-card table td:nth-child(6) {
+  width: 25%;
+}
+
+/* Để bảng full màn hình khi ở tab list */
+.list-card {
+  width: 100%;
+}
+
+.list-card table {
+  width: 100%;
+  table-layout: fixed; /* Giúp giữ đúng % */
+}
+
+
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 600px) {
+  .card {
+    padding: 15px;
+  }
+  table, th, td {
+    font-size: 14px;
+  }
+  .tabs button {
+    flex: 1; /* nút tab chiếm đều chiều ngang */
+  }
+}
