@@ -6,7 +6,7 @@
   "homepage": "https://doanvanquang1211.github.io/report_work/",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --outDir docs",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
