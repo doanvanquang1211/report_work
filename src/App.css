@@ -1,5 +1,5 @@
 body, html {
-  margin: 0;
+  margin: 10px;
   padding: 0;
   height: 100%;
   font-family: Arial, sans-serif;
@@ -158,7 +158,7 @@ th {
 
 .list-card table th:nth-child(2),
 .list-card table td:nth-child(2) {
-  width: 25%;
+  width: 23%;
 }
 
 .list-card table th:nth-child(3),
