@@ -19,6 +19,9 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [statuses, setStatuses] = useState([]);
 
+  const [filterUser, setFilterUser] = useState('');
+  const [filterDate, setFilterDate] = useState('');
+
   const [form, setForm] = useState({
     user: '',
     issues: '',
@@ -127,6 +130,13 @@ export default function App() {
     }
   };
 
+  // Lọc danh sách theo user và date
+  const filteredReports = reports.filter((r) => {
+    const matchUser = filterUser ? r.user === filterUser : true;
+    const matchDate = filterDate ? r.date === filterDate : true;
+    return matchUser && matchDate;
+  });
+
   return (
     <div className="container">
       <h1>Work Report</h1>
@@ -149,6 +159,7 @@ export default function App() {
         </button>
       </div>
 
+      {/* CREATE FORM */}
       {tab === 'create' && (
         <div className="card">
           <label>
@@ -229,51 +240,82 @@ export default function App() {
         </div>
       )}
 
+      {/* LIST + FILTER */}
       {tab === 'list' && (
-        <div className="card list-card">
-          {reports.length === 0 ? (
-            <p>No reports yet.</p>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Issues</th>
-                  <th>Date</th>
-                  <th>Hours</th>
-                  <th>Status</th>
-                  <th>Comment</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reports.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.user}</td>
-                    <td>{r.issues}</td>
-                    <td>{r.date}</td>
-                    <td>{r.hours}</td>
-                    <td>{r.status}</td>
-                    <td>{r.comment}</td>
-                    <td>
-                      <button
-                        className="action-btn edit"
-                        onClick={() => handleEdit(r)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="action-btn delete"
-                        onClick={() => handleDelete(r.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+        <div className="list-wrapper list-card">
+          {/* Bộ lọc */}
+          <div className="filters">
+            <label>
+              Filter by User:
+              <select
+                value={filterUser}
+                onChange={(e) => setFilterUser(e.target.value)}
+              >
+                <option value="">All</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.name}>
+                    {u.name}
+                  </option>
                 ))}
-              </tbody>
-            </table>
-          )}
+              </select>
+            </label>
+
+            <label>
+              Filter by Date:
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+              />
+            </label>
+          </div>
+
+          {/* Danh sách có scroll */}
+          <div className="list-scroll">
+            {filteredReports.length === 0 ? (
+              <p>No reports found.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Issues</th>
+                    <th>Date</th>
+                    <th>Hours</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredReports.map((r) => (
+                    <tr key={r.id}>
+                      <td>{r.user}</td>
+                      <td>{r.issues}</td>
+                      <td>{r.date}</td>
+                      <td>{r.hours}</td>
+                      <td>{r.status}</td>
+                      <td>{r.comment}</td>
+                      <td>
+                        <button
+                          className="action-btn edit"
+                          onClick={() => handleEdit(r)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="action-btn delete"
+                          onClick={() => handleDelete(r.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       )}
     </div>

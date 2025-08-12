@@ -6,22 +6,22 @@ body, html {
 }
 
 .container {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f4f4f4;
-  padding: 20px;
+  height: 100vh;
 }
 
 /* Tabs */
 .tabs {
-  margin-bottom: 20px;
+  flex-shrink: 0;
   display: flex;
-  flex-wrap: wrap; /* để responsive */
-  justify-content: center;
   gap: 10px;
+  background: white;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .createActive:hover {
@@ -30,6 +30,38 @@ body, html {
 
 .listActive:hover {
   background-color: #2980b9;
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.filters {
+  flex-shrink: 0;
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 52px;
+  z-index: 9;
+}
+
+.list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: white;
+  min-height: 0;
+}
+
+.list-wrapper table {
+  width: 100%;
+  table-layout: fixed;
 }
 
 .tabs button {
