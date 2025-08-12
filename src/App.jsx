@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { db } from './firebase/firebaseConfig.js'; // Import Firestore config
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { db } from './firebase/firebaseConfig.js';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from 'firebase/firestore';
 
 export default function App() {
   const [tab, setTab] = useState('create');
+  const [formMode, setFormMode] = useState('create'); // 'create' or 'edit'
+  const [editId, setEditId] = useState(null);
+
   const [reports, setReports] = useState([]);
-  const [users, setUsers] = useState([]); // danh sách user từ Firestore
-    const [statuses, setStatuses] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [statuses, setStatuses] = useState([]);
 
   const [form, setForm] = useState({
     user: '',
@@ -18,15 +28,15 @@ export default function App() {
     status: 'Pending',
   });
 
-  // Lấy danh sách users khi mở tab create
+  // Fetch users and statuses
   useEffect(() => {
     if (tab === 'create') {
       fetchUsers();
-       fetchStatuses();
+      fetchStatuses();
     }
   }, [tab]);
 
-  // Lấy dữ liệu từ Firestore khi mở tab list
+  // Fetch reports
   useEffect(() => {
     if (tab === 'list') {
       fetchReports();
@@ -39,8 +49,6 @@ export default function App() {
       id: doc.id,
       ...doc.data(),
     }));
-    console.log("data",data);
-    
     setUsers(data);
   };
 
@@ -53,15 +61,30 @@ export default function App() {
     setReports(data);
   };
 
-   const fetchStatuses = async () => {
-    const querySnapshot = await getDocs(collection(db, "statuses"));
-    const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const fetchStatuses = async () => {
+    const querySnapshot = await getDocs(collection(db, 'statuses'));
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     setStatuses(data);
   };
 
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const resetForm = () => {
+    setForm({
+      user: '',
+      issues: '',
+      date: '',
+      hours: '',
+      comment: '',
+      status: 'Pending',
+    });
+    setFormMode('create');
+    setEditId(null);
   };
 
   const handleSubmit = async () => {
@@ -70,19 +93,37 @@ export default function App() {
     }
 
     try {
-      await addDoc(collection(db, 'reports'), form);
-      alert('Report created!');
-      setForm({
-        user: '',
-        issues: '',
-        date: '',
-        hours: '',
-        comment: '',
-        status: 'Pending',
-      });
+      if (formMode === 'create') {
+        await addDoc(collection(db, 'reports'), form);
+        alert('Report created!');
+      } else if (formMode === 'edit' && editId) {
+        const reportRef = doc(db, 'reports', editId);
+        await updateDoc(reportRef, form);
+        alert('Report updated!');
+      }
+      resetForm();
       setTab('list');
+      fetchReports();
     } catch (error) {
-      console.error('Error adding document: ', error);
+      console.error('Error saving document: ', error);
+    }
+  };
+
+  const handleEdit = (report) => {
+    setForm(report);
+    setFormMode('edit');
+    setEditId(report.id);
+    setTab('create');
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this report?')) return;
+    try {
+      await deleteDoc(doc(db, 'reports', id));
+      alert('Report deleted!');
+      fetchReports();
+    } catch (error) {
+      console.error('Error deleting document: ', error);
     }
   };
 
@@ -92,13 +133,16 @@ export default function App() {
 
       <div className="tabs">
         <button
-          className={tab === 'create' ? 'active' : ''}
-          onClick={() => setTab('create')}
+          className={tab === 'create' ? 'active' : 'createActive'}
+          onClick={() => {
+            resetForm();
+            setTab('create');
+          }}
         >
-          Create
+          {formMode === 'edit' ? 'Edit Report' : 'Create'}
         </button>
         <button
-          className={tab === 'list' ? 'active' : ''}
+          className={tab === 'list' ? 'active' : 'listActive'}
           onClick={() => setTab('list')}
         >
           List
@@ -176,21 +220,9 @@ export default function App() {
 
           <div className="actions">
             <button onClick={handleSubmit} className="btn primary">
-              Create
+              {formMode === 'edit' ? 'Update' : 'Create'}
             </button>
-            <button
-              onClick={() =>
-                setForm({
-                  user: '',
-                  issues: '',
-                  date: '',
-                  hours: '',
-                  comment: '',
-                  status: 'Pending',
-                })
-              }
-              className="btn secondary"
-            >
+            <button onClick={resetForm} className="btn secondary">
               Reset
             </button>
           </div>
@@ -211,6 +243,7 @@ export default function App() {
                   <th>Hours</th>
                   <th>Status</th>
                   <th>Comment</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -222,6 +255,20 @@ export default function App() {
                     <td>{r.hours}</td>
                     <td>{r.status}</td>
                     <td>{r.comment}</td>
+                    <td>
+                      <button
+                        className="action-btn edit"
+                        onClick={() => handleEdit(r)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="action-btn delete"
+                        onClick={() => handleDelete(r.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
